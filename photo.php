@@ -1,33 +1,6 @@
 <?php
-
-function SqliteCheckTableExists(&$dbh,$name)
-{
-	//Check if table exists
-	$sql = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=".$dbh->quote($name).";";
-	$ret = $dbh->query($sql);
-	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
-	$tableExists = 0;
-	foreach($ret as $row)
-	{
-		$tableExists = ($row[0] > 0);
-	}
-	return $tableExists;
-}
-
-function GetPhotoData(&$dbh,$id)
-{
-	$sql = "SELECT * FROM photos WHERE id=?;";
-	$sth = $dbh->prepare($sql);
-	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
-	$ret = $sth->execute(array($id));
-	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
-	foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $row)
-	{
-		//print_r($row);
-		return $row;
-	}
-	return NULL;
-}
+#https://farm9.staticflickr.com/8471/8135759889_763413738b_b.jpg
+require_once('photodb.php');
 
 //Prepare database connection
 chdir(dirname(realpath (__FILE__)));
@@ -41,11 +14,7 @@ if(isset($_POST['form-action']) and $_POST['form-action']=="Upload" and strlen($
 {
 	$exists = SqliteCheckTableExists($photoDb,"photos");
 	if(!$exists)
-	{
-		$sql ="CREATE TABLE photos (id INTEGER PRIMARY KEY, url TEXT, license TEXT, comment TEXT);";
-		$ret = $photoDb->exec($sql);
-		if($ret===false) {$err= $photoDb->errorInfo();throw new Exception($sql.",".$err[2]);}
-	}
+		CreatePhotoTable($photoDb);
 
 	$sql = "INSERT INTO photos (url, license, comment) VALUES (?,?,?);";
 	$sth = $photoDb->prepare($sql);
@@ -59,7 +28,7 @@ $photoData = GetPhotoData($photoDb, $viewPhotoId);
 ?>
 
 <html>
-
+<body>
 <?php
 if($viewPhotoId==NULL)
 {
@@ -85,6 +54,34 @@ if($viewPhotoId!=NULL)
 ?>
 <h1>Photo <?php echo $viewPhotoId; ?></h1>
 
+<?php
+if(PhotoInStore($photoDb, $viewPhotoId)===0)
+{
+	StorePhotoUrl($photoData['url'], $viewPhotoId, $photoDb);
+}
+$fina = PhotoInStore($photoDb, $viewPhotoId);
+if($fina!==0)
+{
+if($photoData['width']==0)
+	list($photoData['width'], $photoData['height']) = SetPhotoDimensions($viewPhotoId, $photoDb);
+$maxDim = $photoData['width'];
+if($photoData['height']>$maxDim)
+	$maxDim = $photoData['height'];
+$width = $photoData['width'];
+$height = $photoData['height'];
+if($maxDim > 640)
+{
+	$width *= 640. / $maxDim;
+	$height *= 640. / $maxDim;
+}
+?>
+
+<img src="<?php echo $fina;?>" alt="Photo" width="<?php echo $width;?>" height="<?php echo $height;?>"/><br/>
+<?php
+}
+echo 'Size: '.$photoData['width']." by ".$photoData['height']."<br/>";
+?>
+
 <form name="upload" method="post">
 URL <input type="text" name="url" value="<?php echo $photoData['url']; ?>"><br>
 License <input type="text" name="license" value="<?php echo $photoData['license']; ?>"><br>
@@ -97,6 +94,6 @@ Comment <input type="text" name="comment" value="<?php echo $photoData['comment'
 ?>
 
 <a href="list.php">List</a>
-
+</body>
 </html>
 

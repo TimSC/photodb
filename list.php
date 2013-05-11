@@ -1,9 +1,12 @@
 <?php
+require_once('photodb.php');
 
 //Prepare database connection
 chdir(dirname(realpath (__FILE__)));
 $photoDb = new PDO('sqlite:photodb.db');
-
+$exists = SqliteCheckTableExists($photoDb,"photos");
+if(!$exists)
+	CreatePhotoTable($photoDb);
 
 $sql = "SELECT * FROM photos;";
 $sth = $photoDb->prepare($sql);
@@ -13,6 +16,9 @@ if($ret===false) {$err= $photoDb->errorInfo();throw new Exception($sql.",".$err[
 ?>
 <html>
 <body>
+
+<a href="photo.php">Upload Photo</a>
+
 <table border="2">
 <?php
 while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -22,11 +28,15 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
 	echo "<td>".$row['url']."</td>";
 	echo "<td>".$row['license']."</td>";
 	echo "<td>".$row['comment']."</td>";
+	echo "<td>".$row['width']."</td>";
+	echo "<td>".$row['height']."</td>";
+	echo "<td>".$row['colour']."</td>";
 	echo "</tr>\n";
 }
 
 
 ?>
+
 </table>
 </body>
 </html>
