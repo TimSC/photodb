@@ -28,7 +28,7 @@ bboxes[0] = new Array(100, 100, 200, 200);
 bboxes[1] = new Array(300, 300, 400, 400);
 
 var img, ctx;
-var pressed = 0;
+var pressed = 0, selectedBbox = -1;
 
 window.onload = function() {	
 	var canvas = document.getElementById('canv');
@@ -61,8 +61,29 @@ function MouseDown(e)
         mouseY = e.layerY;
     }
 
-	bboxes[0][0] = mouseX;
-	bboxes[0][1] = mouseY;
+	//Determine closest bounding box
+	var closestInd = -1;
+	var closestDist = -1.;
+	for (i=0;i<bboxes.length;i++)
+	{
+		distA = Math.sqrt(Math.pow(bboxes[i][0] - mouseX, 2) + Math.pow(bboxes[i][1] - mouseY, 2));
+		if(closestInd == -1 || distA < closestDist)
+		{
+			closestInd = i;
+			closestDist = distA;
+		}
+		distB = Math.sqrt(Math.pow(bboxes[i][2] - mouseX, 2) + Math.pow(bboxes[i][3] - mouseY, 2));
+		if(closestInd == -1 || distB < closestDist)
+		{
+			closestInd = i;
+			closestDist = distB;
+		}
+	}
+
+	//Update bounding box location
+	selectedBbox = closestInd;
+	bboxes[selectedBbox][0] = mouseX;
+	bboxes[selectedBbox][1] = mouseY;
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
 	//window.alert(px)
@@ -83,8 +104,8 @@ function MouseMove(e)
         mouseX = e.layerX;
         mouseY = e.layerY;
     }
-	bboxes[0][2] = mouseX;
-	bboxes[0][3] = mouseY;
+	bboxes[selectedBbox][2] = mouseX;
+	bboxes[selectedBbox][3] = mouseY;
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
 }
@@ -92,6 +113,7 @@ function MouseMove(e)
 function MouseUp(e)
 {
 	pressed = 0;
+	selectedBbox = -1;
 }
 
 function DrawOverlay(ctx)
