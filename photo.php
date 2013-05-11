@@ -1,9 +1,5 @@
 <?php
 
-//Prepare database connection
-chdir(dirname(realpath (__FILE__)));
-$photoDb = new PDO('sqlite:photodb.db');
-
 function SqliteCheckTableExists(&$dbh,$name)
 {
 	//Check if table exists
@@ -17,6 +13,25 @@ function SqliteCheckTableExists(&$dbh,$name)
 	}
 	return $tableExists;
 }
+
+function GetPhotoData(&$dbh,$id)
+{
+	$sql = "SELECT * FROM photos WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($id));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
+	foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $row)
+	{
+		//print_r($row);
+		return $row;
+	}
+	return NULL;
+}
+
+//Prepare database connection
+chdir(dirname(realpath (__FILE__)));
+$photoDb = new PDO('sqlite:photodb.db');
 
 if(isset($_GET['id']))
 	$viewPhotoId = $_GET['id'];
@@ -40,7 +55,7 @@ if(isset($_POST['form-action']) and $_POST['form-action']=="Upload" and strlen($
 	$viewPhotoId = $photoDb->lastInsertId();
 }
 
-
+$photoData = GetPhotoData($photoDb, $viewPhotoId);
 ?>
 
 <html>
@@ -65,10 +80,17 @@ Comment <input type="text" name="comment"><br>
 if($viewPhotoId!=NULL)
 {
 
-echo $viewPhotoId;
+
+
 ?>
+<h1>Photo <?php echo $viewPhotoId; ?></h1>
 
-
+<form name="upload" method="post">
+URL <input type="text" name="url" value="<?php echo $photoData['url']; ?>"><br>
+License <input type="text" name="license" value="<?php echo $photoData['license']; ?>"><br>
+Comment <input type="text" name="comment" value="<?php echo $photoData['comment']; ?>"><br>
+<input type="submit" name="form-action" value="Edit">
+</form>
 
 <?php
 }
