@@ -46,6 +46,10 @@ window.onload = function() {
 	canvas.addEventListener("mouseup", MouseUp, false);
 
 	//DrawOverlay(ctx)
+	//var numRoisEl = document.getElementById('num-rois');
+	//numRoisEl.addEventListener("onchange", NumRoisChanged, false);
+
+
 }
 
 function MouseDown(e)
@@ -130,6 +134,21 @@ function DrawOverlay(ctx)
 	}
 }
 
+function NumRoisChanged()
+{
+	var width = <?php echo $photoData['width'];?>;
+	var height = <?php echo $photoData['height'];?>;
+	var numRoisEl = document.getElementById('num-rois');
+	numRois = Math.round(numRoisEl.value);
+	while(bboxes.length > numRois)
+		bboxes.pop();
+	while(bboxes.length < numRois)
+		bboxes.push(new Array(200,200,300,300));
+
+	ctx.drawImage(img,0,0);
+	DrawOverlay(ctx)
+}
+
 </script>
 </head>
 <body>
@@ -141,6 +160,12 @@ if($fina!==0)
 <h1>Edit ROI</h1>
 
 <canvas id="canv" style="position: relative;" width="<?php echo $photoData['width'];?>" height="<?php echo $photoData['height'];?>">Canvas not supported</canvas><br/>
+
+<p>Number of ROIs <input id="num-rois" type="text" name="num-rois" value="2"><a href="#" onclick="NumRoisChanged()">Set</a></p>
+
+<form>
+<input type="submit" name="form-action" value="Update">
+</form>
 
 <?php
 }
