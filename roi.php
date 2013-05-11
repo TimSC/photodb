@@ -1,10 +1,15 @@
 <?php
 
 require_once('photodb.php');
+require_once('roidb.php');
 
 //Prepare database connection
 chdir(dirname(realpath (__FILE__)));
 $photoDb = new PDO('sqlite:photodb.db');
+
+$exists = SqliteCheckTableExists($photoDb,"rois");
+if(!$exists)
+	CreateRoiTable($photoDb);
 
 if(isset($_GET['id']))
 	$viewPhotoId = $_GET['id'];
@@ -18,9 +23,18 @@ if(PhotoInStore($photoDb, $viewPhotoId)===0)
 }
 $fina = PhotoInStore($photoDb, $viewPhotoId);
 $photoData = GetPhotoData($photoDb, $viewPhotoId);
+
+//Process update if necessary
+if(isset($_POST['form-action']) && $_POST['form-action'] == "Update ROIs")
+{
+	UpdateRois($photoDb, $viewPhotoId, json_decode($_POST['bbox']));
+}
+
 $bboxesJson = Null;
-if(isset($_POST['bbox']))
-	$bboxesJson = $_POST['bbox'];
+//if(isset($_POST['bbox']))
+//	$bboxesJson = $_POST['bbox'];
+$bboxesJson = json_encode(GetRois($photoDb, $viewPhotoId));
+
 
 ?>
 
@@ -66,6 +80,9 @@ window.onload = function() {
 	var numRoisEl = document.getElementById('num-rois');
 	numRoisEl.value = bboxes.length;
 	//numRoisEl.addEventListener("onchange", NumRoisChanged, false);
+
+	var bboxFormEl = document.getElementById('form-bbox');
+	bboxFormEl.value = JSON.stringify(bboxes)
 
 }
 
