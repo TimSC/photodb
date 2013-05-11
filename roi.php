@@ -10,6 +10,7 @@ if(isset($_GET['id']))
 	$viewPhotoId = $_GET['id'];
 else
 	$viewPhotoId = NULL;
+if($viewPhotoId===NULL) die("Photo ID needs to be specified");
 
 if(PhotoInStore($photoDb, $viewPhotoId)===0)
 {
@@ -17,14 +18,31 @@ if(PhotoInStore($photoDb, $viewPhotoId)===0)
 }
 $fina = PhotoInStore($photoDb, $viewPhotoId);
 $photoData = GetPhotoData($photoDb, $viewPhotoId);
+$bboxesJson = Null;
+if(isset($_POST['bbox']))
+	$bboxesJson = $_POST['bbox'];
+
 ?>
 
 <html>
 <head>
 <script language="javascript" type="text/javascript">
 
+<?php
+if($bboxesJson!==NULL)
+{
+?>
+var bboxes = JSON.parse("<?php echo $bboxesJson;?>");
+<?php
+}
+else
+{
+?>
 var bboxes = new Array();
 bboxes[0] = new Array(100, 100, 200, 200);
+<?php
+}
+?>
 
 var img, ctx;
 var pressed = 0, selectedBbox = -1;
@@ -45,9 +63,9 @@ window.onload = function() {
 	canvas.addEventListener("mouseup", MouseUp, false);
 
 	//DrawOverlay(ctx)
-	//var numRoisEl = document.getElementById('num-rois');
+	var numRoisEl = document.getElementById('num-rois');
+	numRoisEl.value = bboxes.length;
 	//numRoisEl.addEventListener("onchange", NumRoisChanged, false);
-
 
 }
 
@@ -89,6 +107,8 @@ function MouseDown(e)
 	bboxes[selectedBbox][1] = mouseY;
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
+	var bboxFormEl = document.getElementById('form-bbox');
+	bboxFormEl.value = JSON.stringify(bboxes)
 	//window.alert(px)
 	//window.alert("MouseDown");
 }
@@ -111,6 +131,8 @@ function MouseMove(e)
 	bboxes[selectedBbox][3] = mouseY;
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
+	var bboxFormEl = document.getElementById('form-bbox');
+	bboxFormEl.value = JSON.stringify(bboxes)
 }
 
 function MouseUp(e)
@@ -146,6 +168,8 @@ function NumRoisChanged()
 
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
+	var bboxFormEl = document.getElementById('form-bbox');
+	bboxFormEl.value = JSON.stringify(bboxes)
 }
 
 </script>
@@ -160,10 +184,11 @@ if($fina!==0)
 
 <canvas id="canv" style="position: relative;" width="<?php echo $photoData['width'];?>" height="<?php echo $photoData['height'];?>">Canvas not supported</canvas><br/>
 
-<p>Number of ROIs <input id="num-rois" type="text" name="num-rois" value="1"><a href="#" onclick="NumRoisChanged()">Set</a></p>
+<p>Number of ROIs <input id="num-rois" type="text" name="num-rois" value="1"><input type="submit" value="Set" onclick="NumRoisChanged()"></p>
 
-<form>
-<input type="submit" name="form-action" value="Update">
+<form name="upload" method="post" action="roi.php?id=<?php echo $viewPhotoId;?>">
+<input id="form-bbox" name="bbox" type="hidden" value="{}">
+<input type="submit" name="form-action" value="Update ROIs">
 </form>
 
 <?php
