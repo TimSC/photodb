@@ -25,7 +25,6 @@ $photoData = GetPhotoData($photoDb, $viewPhotoId);
 
 var bboxes = new Array();
 bboxes[0] = new Array(100, 100, 200, 200);
-bboxes[1] = new Array(300, 300, 400, 400);
 
 var img, ctx;
 var pressed = 0, selectedBbox = -1;
@@ -161,7 +160,7 @@ if($fina!==0)
 
 <canvas id="canv" style="position: relative;" width="<?php echo $photoData['width'];?>" height="<?php echo $photoData['height'];?>">Canvas not supported</canvas><br/>
 
-<p>Number of ROIs <input id="num-rois" type="text" name="num-rois" value="2"><a href="#" onclick="NumRoisChanged()">Set</a></p>
+<p>Number of ROIs <input id="num-rois" type="text" name="num-rois" value="1"><a href="#" onclick="NumRoisChanged()">Set</a></p>
 
 <form>
 <input type="submit" name="form-action" value="Update">
