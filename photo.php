@@ -96,5 +96,7 @@ Comment <input type="text" name="comment" value="<?php echo $photoData['comment'
 }
 ?>
 
+<a href="list.php">List</a>
+
 </html>
 
