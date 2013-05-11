@@ -22,7 +22,7 @@ function StorePhotoUrl($url, $id, $dbh)
 	$tmpFi = fopen($tmpFina,"wb");
 	fwrite($tmpFi, $output);
 	fclose($tmpFi);
-
+	
 	//Update database with filename
 	$sql = "UPDATE photos SET fina=? WHERE id=?;";
 	$sth = $dbh->prepare($sql);
@@ -42,7 +42,8 @@ function PhotoInStore($dbh, $id)
 	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
 	foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $row)
 	{
-		return $row['fina'];
+		if($row['fina'] !== NULL)
+			return $row['fina'];
 	}
 
 	return 0;
@@ -87,6 +88,7 @@ function GetPhotoData(&$dbh,$id)
 function SetPhotoDimensions($id, $dbh)
 {
 	$fina=PhotoInStore($dbh, $id);
+	if(strlen($fina)==0) return Null;
 	$si = getimagesize($fina);
 	if(!is_array($si)) return Null;
 
@@ -97,6 +99,22 @@ function SetPhotoDimensions($id, $dbh)
 	$ret = $sth->execute(array($si[0], $si[1], $id));
 	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
 	return array($si[0], $si[1]);
+}
+
+function DeletePhoto($dbh, $id)
+{
+	$fina = PhotoInStore($dbh, $id);
+	if($fina!==0 && file_exists($fina))
+	{
+		unlink($fina);
+	}
+
+	$sql = "DELETE FROM photos WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($id));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+
 }
 
 ?>

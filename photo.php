@@ -24,18 +24,35 @@ if(isset($_POST['form-action']) and $_POST['form-action']=="Upload" and strlen($
 	$viewPhotoId = $photoDb->lastInsertId();
 }
 
+if(isset($_GET['delete-confirmed']))
+{
+	DeletePhoto($photoDb, (int)($_GET['delete-confirmed']));
+}
+
 $photoData = GetPhotoData($photoDb, $viewPhotoId);
 ?>
 
 <html>
 <body>
 <?php
-if($viewPhotoId==NULL)
+
+if(isset($_GET['delete']))
+{
+?>
+<h1>Are you sure?</h1>
+
+<a href="?delete-confirmed=<?php echo $_GET['delete']?>">Yes</a> 
+<a href="?id=<?php echo $_GET['delete']?>">No</a><br/>
+
+<?php
+}
+
+if($viewPhotoId==NULL && !isset($_GET['delete']))
 {
 ?>
 <h1>Photo Upload</h1>
 
-<form name="upload" method="post">
+<form name="upload" method="post" action="photo.php">
 URL <input type="text" name="url"><br>
 Upload File <br>
 License <input type="text" name="license"><br>
@@ -46,7 +63,7 @@ Comment <input type="text" name="comment"><br>
 <?php
 }
 
-if($viewPhotoId!=NULL)
+if($viewPhotoId!=NULL && !isset($_GET['delete']))
 {
 
 
@@ -82,17 +99,17 @@ if($maxDim > 640)
 echo 'Size: '.$photoData['width']." by ".$photoData['height']."<br/>";
 ?>
 
-<form name="upload" method="post">
+<form name="upload" method="post" action="photo.php">
 URL <input type="text" name="url" value="<?php echo $photoData['url']; ?>"><br>
 License <input type="text" name="license" value="<?php echo $photoData['license']; ?>"><br>
 Comment <input type="text" name="comment" value="<?php echo $photoData['comment']; ?>"><br>
 <input type="submit" name="form-action" value="Edit">
 </form>
 
+<a href="photo.php?delete=<?php echo $viewPhotoId;?>">Delete</a><br/>
 <?php
 }
 ?>
-
 <a href="list.php">List</a>
 </body>
 </html>
