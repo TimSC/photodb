@@ -22,8 +22,11 @@ $photoData = GetPhotoData($photoDb, $viewPhotoId);
 <html>
 <head>
 <script language="javascript" type="text/javascript">
-var px = 100, py = 100;
-var px2 = 200, py2 = 200;
+
+var bboxes = new Array();
+bboxes[0] = new Array(100, 100, 200, 200);
+bboxes[1] = new Array(300, 300, 400, 400);
+
 var img, ctx;
 var pressed = 0;
 
@@ -58,8 +61,8 @@ function MouseDown(e)
         mouseY = e.layerY;
     }
 
-	px = mouseX;
-	py = mouseY;
+	bboxes[0][0] = mouseX;
+	bboxes[0][1] = mouseY;
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
 	//window.alert(px)
@@ -80,8 +83,8 @@ function MouseMove(e)
         mouseX = e.layerX;
         mouseY = e.layerY;
     }
-	px2 = mouseX;
-	py2 = mouseY;
+	bboxes[0][2] = mouseX;
+	bboxes[0][3] = mouseY;
 	ctx.drawImage(img,0,0);
 	DrawOverlay(ctx)
 }
@@ -93,13 +96,16 @@ function MouseUp(e)
 
 function DrawOverlay(ctx)
 {
-    ctx.beginPath();
-    ctx.moveTo(px,py);
-    ctx.lineTo(px2,py);
-    ctx.lineTo(px2,py2);
-    ctx.lineTo(px,py2);
-    ctx.lineTo(px,py);
-    ctx.stroke();
+	for (i=0;i<bboxes.length;i++)
+	{
+		ctx.beginPath();
+		ctx.moveTo(bboxes[i][0],bboxes[i][1]);
+		ctx.lineTo(bboxes[i][2],bboxes[i][1]);
+		ctx.lineTo(bboxes[i][2],bboxes[i][3]);
+		ctx.lineTo(bboxes[i][0],bboxes[i][3]);
+		ctx.lineTo(bboxes[i][0],bboxes[i][1]);
+		ctx.stroke();
+	}
 }
 
 </script>
