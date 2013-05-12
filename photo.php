@@ -98,9 +98,9 @@ echo 'Size: '.$photoData['width']." by ".$photoData['height']."<br/>";
 ?>
 
 <form name="upload" method="post" action="photo.php">
-URL <input type="text" name="url" value="<?php echo $photoData['url']; ?>"><br>
-License <input type="text" name="license" value="<?php echo $photoData['license']; ?>"><br>
-Comment <input type="text" name="comment" value="<?php echo $photoData['comment']; ?>"><br>
+URL <input type="text" name="url" value="<?php echo $photoData['url']; ?>"/><br/>
+License <input type="text" name="license" value="<?php echo $photoData['license']; ?>"/><br/>
+Comment <input type="text" name="comment" value="<?php echo $photoData['comment']; ?>"/><br/>
 <input type="submit" name="form-action" value="Edit">
 </form>
 

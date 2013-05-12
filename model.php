@@ -31,8 +31,12 @@ $nativeHeight = $bboxesInfo['pos'][3]-$bboxesInfo['pos'][1];
 <script language="javascript" type="text/javascript">
 
 
-var bboxes = new Array();
-bboxes[0] = new Array(100, 100, 200, 200);
+var pts = new Array();
+pts[0] = new Array(50, 50);
+pts[1] = new Array(10, 10);
+pts[2] = new Array(20, 20);
+pts[3] = new Array(30, 30);
+pts[4] = new Array(40, 40);
 
 var img, ctx;
 var pressed = 0, selectedBbox = -1;
@@ -62,11 +66,11 @@ window.onload = function() {
 
 	//DrawOverlay(ctx)
 	//var numRoisEl = document.getElementById('num-rois');
-	//numRoisEl.value = bboxes.length;
+	//numRoisEl.value = pts.length;
 	//numRoisEl.addEventListener("onchange", NumRoisChanged, false);
 
 	//var bboxFormEl = document.getElementById('form-bbox');
-	//bboxFormEl.value = JSON.stringify(bboxes)
+	//bboxFormEl.value = JSON.stringify(pts)
 
 }
 
@@ -86,44 +90,29 @@ function MouseDown(e)
 	//Determine closest bounding box
 	var closestInd = -1;
 	var closestDist = -1.;
-	for (i=0;i<bboxes.length;i++)
+	for (i=0;i<pts.length;i++)
 	{
-		distA = Math.sqrt(Math.pow(bboxes[i][0]*displayratio - mouseX, 2) + Math.pow(bboxes[i][1]*displayratio - mouseY, 2));
-		if(closestInd == -1 || distA < closestDist)
+		dist = Math.sqrt(Math.pow(pts[i][0]*displayratio - mouseX, 2) + Math.pow(pts[i][1]*displayratio - mouseY, 2));
+		if(closestInd == -1 || dist < closestDist)
 		{
 			closestInd = i;
-			closestDist = distA;
-		}
-		distB = Math.sqrt(Math.pow(bboxes[i][2]*displayratio - mouseX, 2) + Math.pow(bboxes[i][3]*displayratio - mouseY, 2));
-		if(closestInd == -1 || distB < closestDist)
-		{
-			closestInd = i;
-			closestDist = distB;
-		}
-		distC = Math.sqrt(Math.pow(bboxes[i][0]*displayratio - mouseX, 2) + Math.pow(bboxes[i][3]*displayratio - mouseY, 2));
-		if(closestInd == -1 || distC < closestDist)
-		{
-			closestInd = i;
-			closestDist = distC;
-		}
-		distD = Math.sqrt(Math.pow(bboxes[i][2]*displayratio - mouseX, 2) + Math.pow(bboxes[i][1]*displayratio - mouseY, 2));
-		if(closestInd == -1 || distD < closestDist)
-		{
-			closestInd = i;
-			closestDist = distD;
+			closestDist = dist;
 		}
 	}
 
 	//Update bounding box location
 	selectedBbox = closestInd;
-	bboxes[selectedBbox][0] = mouseX/displayratio;
-	bboxes[selectedBbox][1] = mouseY/displayratio;
+	pts[selectedBbox][0] = mouseX/displayratio;
+	pts[selectedBbox][1] = mouseY/displayratio;
 	ctx.drawImage(img, 0, 0, displaywidth, displayheight);
 	DrawOverlay(ctx)
-	var bboxFormEl = document.getElementById('form-bbox');
-	bboxFormEl.value = JSON.stringify(bboxes)
+	//var bboxFormEl = document.getElementById('form-bbox');
+	//bboxFormEl.value = JSON.stringify(bboxes)
 	//window.alert(px)
 	//window.alert("MouseDown");
+
+	var selectedPtEl = document.getElementById('point-selected');
+	selectedPtEl.value = closestInd + 1;
 }
 
 function MouseMove(e)
@@ -140,12 +129,12 @@ function MouseMove(e)
         mouseX = e.layerX;
         mouseY = e.layerY;
     }
-	bboxes[selectedBbox][2] = mouseX/displayratio;
-	bboxes[selectedBbox][3] = mouseY/displayratio;
+	pts[selectedBbox][0] = mouseX/displayratio;
+	pts[selectedBbox][1] = mouseY/displayratio;
 	ctx.drawImage(img, 0, 0, displaywidth, displayheight);
 	DrawOverlay(ctx)
-	var bboxFormEl = document.getElementById('form-bbox');
-	bboxFormEl.value = JSON.stringify(bboxes)
+	//var bboxFormEl = document.getElementById('form-bbox');
+	//bboxFormEl.value = JSON.stringify(bboxes)
 }
 
 function MouseUp(e)
@@ -156,14 +145,13 @@ function MouseUp(e)
 
 function DrawOverlay(ctx)
 {
-	for (i=0;i<bboxes.length;i++)
+	for (i=0;i<pts.length;i++)
 	{
 		ctx.beginPath();
-		ctx.moveTo(bboxes[i][0]*displayratio,bboxes[i][1]*displayratio);
-		ctx.lineTo(bboxes[i][2]*displayratio,bboxes[i][1]*displayratio);
-		ctx.lineTo(bboxes[i][2]*displayratio,bboxes[i][3]*displayratio);
-		ctx.lineTo(bboxes[i][0]*displayratio,bboxes[i][3]*displayratio);
-		ctx.lineTo(bboxes[i][0]*displayratio,bboxes[i][1]*displayratio);
+		ctx.moveTo(pts[i][0]*displayratio-10,pts[i][1]*displayratio);
+		ctx.lineTo(pts[i][0]*displayratio+10,pts[i][1]*displayratio);
+		ctx.moveTo(pts[i][0]*displayratio,pts[i][1]*displayratio-10);
+		ctx.lineTo(pts[i][0]*displayratio,pts[i][1]*displayratio+10);
 		ctx.stroke();
 	}
 }
@@ -174,15 +162,15 @@ function NumRoisChanged()
 	var height = <?php echo $photoData['height'];?>;
 	var numRoisEl = document.getElementById('num-rois');
 	numRois = Math.round(numRoisEl.value);
-	while(bboxes.length > numRois)
-		bboxes.pop();
-	while(bboxes.length < numRois)
-		bboxes.push(new Array(200,200,300,300));
+	while(pts.length > numRois)
+		pts.pop();
+	while(pts.length < numRois)
+		pts.push(new Array(200,200));
 
 	ctx.drawImage(img, 0, 0, displaywidth, displayheight);
 	DrawOverlay(ctx)
 	var bboxFormEl = document.getElementById('form-bbox');
-	bboxFormEl.value = JSON.stringify(bboxes)
+	bboxFormEl.value = JSON.stringify(pts)
 }
 
 </script>
@@ -190,12 +178,12 @@ function NumRoisChanged()
 <body>
 <h1>Model</h1>
 <?php //print_r($model); ?>
-<?php print_r($bboxesInfo); ?>
+<?php //print_r($bboxesInfo); ?>
 <?php //print_r($photoData); ?>
 
 <canvas id="canv" style="position: relative;" width="<?php echo $displaywidth;?>" height="<?php echo $displayheight;?>">Canvas not supported</canvas><br/>
-<!--<img src="roiimg.php?roiId=<?php echo (int)$model['roiId'];?>&target-size=600" alt="ROI"/>-->
 
+Point Selected <input type="text" id="point-selected"/>
 
 </body>
 </html>
