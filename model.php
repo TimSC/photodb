@@ -174,5 +174,10 @@ Point Selected <input type="text" id="point-selected"/>
 <input type="submit" name="form-action" value="Update Model">
 </form>
 
+<a href="photo.php?id=<?php echo $bboxesInfo['photoId'];?>">Photo Details</a> 
+<a href="roi.php?id=<?php echo $bboxesInfo['photoId'];?>">Edit ROIs</a> 
+<a href="managerois.php?id=<?php echo $bboxesInfo['photoId'];?>">Manage ROIs</a> 
+<a href="list.php">List Photos</a>
+
 </body>
 </html>
