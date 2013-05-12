@@ -61,4 +61,26 @@ function GetRois($dbh, $id)
 	return $bboxes;
 }
 
+function GetRoisInfo($dbh, $id)
+{
+	$sql = "SELECT * FROM rois WHERE photoId=? ORDER BY roiNum ASC;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($id));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+
+	$bboxes = array();
+	foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $row)
+	{
+		$box = array();
+		$box['pos'] = array((float)$row['x1'], (float)$row['y1'], (float)$row['x2'], (float)$row['y2']);
+		$box['id'] = $row['id'];
+		$box['photoId'] = $row['photoId'];
+		$box['roiNum'] = $row['roiNum'];
+		$box['metadata'] = $row['metadata'];
+		array_push($bboxes, $box);
+	}
+	return $bboxes;
+}
+
 ?>

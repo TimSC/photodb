@@ -23,8 +23,7 @@ if(PhotoInStore($photoDb, $viewPhotoId)===0)
 }
 $fina = PhotoInStore($photoDb, $viewPhotoId);
 $photoData = GetPhotoData($photoDb, $viewPhotoId);
-$bboxes = GetRois($photoDb, $viewPhotoId);
-$bboxesJson = json_encode($bboxes);
+$bboxesInfo = GetRoisInfo($photoDb, $viewPhotoId);
 
 //Calculate image sizing
 $maxDimension = $photoData['width'];
@@ -36,6 +35,14 @@ if($maxDimension > 800)
 $displaywidth = $photoData['width'] * $displayRatio;
 $displayheight = $photoData['height'] * $displayRatio;
 
+//print_r($_POST);
+
+if(isset($_POST['form-action']) && $_POST['form-action'] == "Add")
+{
+	
+
+}
+
 ?>
 
 <html>
@@ -44,22 +51,22 @@ $displayheight = $photoData['height'] * $displayRatio;
 
 <h1>Manage ROIs</h1>
 
+<form method="post" action="managerois.php?id=<?php echo $viewPhotoId;?>">
 <table border="2">
-<?php for($i=0;$i<count($bboxes);$i++)
+<?php for($i=0;$i<count($bboxesInfo);$i++)
 {
-$box = $bboxes[$i];
+$box = $bboxesInfo[$i];
 ?>
 <tr>
-<td><?php echo $i+1;?></td>
-
-
-
+<td><input type="checkbox" name="roi-<?php echo $box['id'];?>" value="c"> <?php echo $box['roiNum']+1;?></td><td></td>
 </tr>
 <?php
 }
 ?>
-
 </table>
+Add Model <input type="text" name="comment" value="<?php echo $photoData['comment']; ?>"> <input type="submit" name="form-action" value="Add">
+
+</form>
 
 <a href="photo.php?id=<?php echo $viewPhotoId;?>">Photo Details</a>
 <a href="roi.php?id=<?php echo $viewPhotoId;?>">Edit ROIs</a>
