@@ -26,7 +26,8 @@ $photoData = GetPhotoData($photoDb, $viewPhotoId);
 //Process update if necessary
 if(isset($_POST['form-action']) && $_POST['form-action'] == "Update ROIs")
 {
-	UpdateRois($photoDb, $viewPhotoId, json_decode($_POST['bbox']));
+	$bbox = json_decode($_POST['bbox']);
+	UpdateRois($photoDb, $viewPhotoId, $bbox);
 }
 
 $bboxesJson = json_encode(GetRois($photoDb, $viewPhotoId));

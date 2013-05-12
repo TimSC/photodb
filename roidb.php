@@ -19,6 +19,23 @@ function UpdateRois($dbh, $id, $bboxes)
 	for($i=0;$i<count($bboxes);$i++)
 	{
 		$box = $bboxes[$i];
+
+		//Swap points to make it top-left then bottom-right
+		if($box[0] > $box[2])
+		{
+			$tmp = $box[0];
+			$box[0] = $box[2];
+			$box[2] = $tmp;
+		}
+
+		if($box[1] > $box[3])
+		{
+			$tmp = $box[1];
+			$box[1] = $box[3];
+			$box[3] = $tmp;
+		}
+		
+		//Update database
 		$sql = "SELECT * FROM rois WHERE photoId=? AND roiNum=?;";
 		$sth = $dbh->prepare($sql);
 		if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
@@ -68,7 +85,7 @@ function GetRois($dbh, $id)
 	return $bboxes;
 }
 
-function GetRoisInfo($dbh, $id)
+function GetRoisForPhoto($dbh, $id)
 {
 	$sql = "SELECT * FROM rois WHERE photoId=? ORDER BY roiNum ASC;";
 	$sth = $dbh->prepare($sql);
@@ -88,6 +105,27 @@ function GetRoisInfo($dbh, $id)
 		array_push($bboxes, $box);
 	}
 	return $bboxes;
+}
+
+function GetRoiFromStore($dbh, $id)
+{
+	$sql = "SELECT * FROM rois WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($id));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+
+	foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $row)
+	{
+		$box = array();
+		$box['pos'] = array((float)$row['x1'], (float)$row['y1'], (float)$row['x2'], (float)$row['y2']);
+		$box['id'] = $row['id'];
+		$box['photoId'] = $row['photoId'];
+		$box['roiNum'] = $row['roiNum'];
+		$box['metadata'] = $row['metadata'];
+		return $box;
+	}
+	return Null;
 }
 
 ?>

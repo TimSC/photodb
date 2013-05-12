@@ -24,7 +24,7 @@ if(PhotoInStore($photoDb, $viewPhotoId)===0)
 }
 $fina = PhotoInStore($photoDb, $viewPhotoId);
 $photoData = GetPhotoData($photoDb, $viewPhotoId);
-$bboxesInfo = GetRoisInfo($photoDb, $viewPhotoId);
+$bboxesInfo = GetRoisForPhoto($photoDb, $viewPhotoId);
 
 //Calculate image sizing
 $maxDimension = $photoData['width'];
@@ -75,6 +75,7 @@ $models = GetModelForRoi($photoDb, $box['id']);
 ?>
 <tr>
 <td><input type="checkbox" name="roi-<?php echo $box['id'];?>" value="c"> <?php echo $box['roiNum']+1;?></td>
+<td><img src="roiimg.php?roiId=<?php echo $box['id'];?>&target-size=100" alt="ROI thumbnail"/></td>
 <td>
 <?php 
 foreach($models as $model)
