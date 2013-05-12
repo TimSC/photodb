@@ -224,7 +224,7 @@ if($fina!==0)
 <p>Number of ROIs <input id="num-rois" type="text" name="num-rois" value="1"><input type="submit" value="Set" onclick="NumRoisChanged()"></p>
 
 <form name="upload" method="post" action="roi.php?id=<?php echo $viewPhotoId;?>">
-<input id="form-bbox" name="bbox" type="hidden" value="{}">
+<input id="form-bbox" name="bbox" type="hidden" value="[]">
 <input type="submit" name="form-action" value="Update ROIs">
 </form>
 

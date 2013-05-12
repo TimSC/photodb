@@ -69,8 +69,8 @@ window.onload = function() {
 	//numRoisEl.value = pts.length;
 	//numRoisEl.addEventListener("onchange", NumRoisChanged, false);
 
-	//var bboxFormEl = document.getElementById('form-bbox');
-	//bboxFormEl.value = JSON.stringify(pts)
+	var ptsFormEl = document.getElementById('form-model');
+	ptsFormEl.value = JSON.stringify(pts)
 
 }
 
@@ -106,8 +106,8 @@ function MouseDown(e)
 	pts[selectedBbox][1] = mouseY/displayratio;
 	ctx.drawImage(img, 0, 0, displaywidth, displayheight);
 	DrawOverlay(ctx)
-	//var bboxFormEl = document.getElementById('form-bbox');
-	//bboxFormEl.value = JSON.stringify(bboxes)
+	var ptsFormEl = document.getElementById('form-model');
+	ptsFormEl.value = JSON.stringify(pts)
 	//window.alert(px)
 	//window.alert("MouseDown");
 
@@ -133,8 +133,8 @@ function MouseMove(e)
 	pts[selectedBbox][1] = mouseY/displayratio;
 	ctx.drawImage(img, 0, 0, displaywidth, displayheight);
 	DrawOverlay(ctx)
-	//var bboxFormEl = document.getElementById('form-bbox');
-	//bboxFormEl.value = JSON.stringify(bboxes)
+	var ptsFormEl = document.getElementById('form-model');
+	ptsFormEl.value = JSON.stringify(pts)
 }
 
 function MouseUp(e)
@@ -152,25 +152,9 @@ function DrawOverlay(ctx)
 		ctx.lineTo(pts[i][0]*displayratio+10,pts[i][1]*displayratio);
 		ctx.moveTo(pts[i][0]*displayratio,pts[i][1]*displayratio-10);
 		ctx.lineTo(pts[i][0]*displayratio,pts[i][1]*displayratio+10);
+		ctx.strokeStyle = '#0000ff';
 		ctx.stroke();
 	}
-}
-
-function NumRoisChanged()
-{
-	var width = <?php echo $photoData['width'];?>;
-	var height = <?php echo $photoData['height'];?>;
-	var numRoisEl = document.getElementById('num-rois');
-	numRois = Math.round(numRoisEl.value);
-	while(pts.length > numRois)
-		pts.pop();
-	while(pts.length < numRois)
-		pts.push(new Array(200,200));
-
-	ctx.drawImage(img, 0, 0, displaywidth, displayheight);
-	DrawOverlay(ctx)
-	var bboxFormEl = document.getElementById('form-bbox');
-	bboxFormEl.value = JSON.stringify(pts)
 }
 
 </script>
@@ -184,6 +168,11 @@ function NumRoisChanged()
 <canvas id="canv" style="position: relative;" width="<?php echo $displaywidth;?>" height="<?php echo $displayheight;?>">Canvas not supported</canvas><br/>
 
 Point Selected <input type="text" id="point-selected"/>
+
+<form name="upload" method="post" action="model.php?modelId=<?php echo (int)$_GET['modelId'];?>">
+<input id="form-model" name="bbox" type="hidden" value="[]">
+<input type="submit" name="form-action" value="Update Model">
+</form>
 
 </body>
 </html>
