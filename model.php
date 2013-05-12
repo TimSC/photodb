@@ -14,7 +14,12 @@ CheckModelsSchema($photoDb);
 
 if(!isset($_GET['modelId'])) die("Model Id not specified");
 
-$model = GetModelForStore($photoDb, (int)$_GET['modelId']);
+if(isset($_POST['form-action']) && $_POST['form-action'] == "Update Model")
+{
+	UpdateModelInStore($photoDb, (int)$_GET['modelId'], $_POST['model']);
+}
+
+$model = GetModelFromStore($photoDb, (int)$_GET['modelId']);
 if($model===Null) die("Error getting model data");
 $bboxesInfo = GetRoiFromStore($photoDb, (int)$model['roiId']);
 if($bboxesInfo===Null) die("Error getting ROI data");
@@ -24,19 +29,32 @@ $fina = $photoData['fina'];
 
 $nativeWidth = $bboxesInfo['pos'][2]-$bboxesInfo['pos'][0];
 $nativeHeight = $bboxesInfo['pos'][3]-$bboxesInfo['pos'][1];
+
 ?>
 
 <html>
 <head>
 <script language="javascript" type="text/javascript">
 
-
+<?php
+if($model['model'] !== Null)
+{
+?>
+var pts = JSON.parse("<?php echo $model['model'];?>");
+<?php
+}
+else
+{
+?>
 var pts = new Array();
-pts[0] = new Array(50, 50);
-pts[1] = new Array(10, 10);
-pts[2] = new Array(20, 20);
-pts[3] = new Array(30, 30);
-pts[4] = new Array(40, 40);
+pts[0] = new Array(10, 10);
+pts[1] = new Array(20, 20);
+pts[2] = new Array(30, 30);
+pts[3] = new Array(40, 40);
+pts[4] = new Array(50, 50);
+<?php
+}
+?>
 
 var img, ctx;
 var pressed = 0, selectedBbox = -1;
@@ -167,10 +185,12 @@ function DrawOverlay(ctx)
 
 <canvas id="canv" style="position: relative;" width="<?php echo $displaywidth;?>" height="<?php echo $displayheight;?>">Canvas not supported</canvas><br/>
 
-Point Selected <input type="text" id="point-selected"/>
+<p>Point Selected <input type="text" id="point-selected"/><br/>
+Model name: <?php echo $model['modelName'];?>
+</p>
 
 <form name="upload" method="post" action="model.php?modelId=<?php echo (int)$_GET['modelId'];?>">
-<input id="form-model" name="bbox" type="hidden" value="[]">
+<input id="form-model" name="model" type="hidden" value="[]">
 <input type="submit" name="form-action" value="Update Model">
 </form>
 

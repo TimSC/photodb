@@ -48,7 +48,7 @@ function GetModelForRoi(&$dbh, $roiId)
 	return $sth->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function GetModelForStore(&$dbh, $modelId)
+function GetModelFromStore(&$dbh, $modelId)
 {
 	$sql = "SELECT * FROM models WHERE id=?;";
 	$sth = $dbh->prepare($sql);
@@ -62,14 +62,22 @@ function GetModelForStore(&$dbh, $modelId)
 	return $result[0];
 }
 
-function RemoveModel($dbh, $modelId)
+function RemoveModel(&$dbh, $modelId)
 {
 	$sql = "DELETE FROM models WHERE id=?;";
 	$sth = $dbh->prepare($sql);
 	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
 	$ret = $sth->execute(array($modelId));
 	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
+}
 
+function UpdateModelInStore(&$dbh, $modelId, $model)
+{
+	$sql = "UPDATE models SET model=? WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($model, $modelId));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
 }
 
 ?>
