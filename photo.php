@@ -107,11 +107,11 @@ Comment <input type="text" name="comment" value="<?php echo $photoData['comment'
 </form>
 
 <a href="photo.php?delete=<?php echo $viewPhotoId;?>">Delete</a><br/>
-<a href="roi.php?id=<?php echo $viewPhotoId;?>">Edit ROI</a><br/>
+<a href="roi.php?id=<?php echo $viewPhotoId;?>">Edit ROIs</a><br/>
 <?php
 }
 ?>
-<a href="list.php">List</a>
+<a href="list.php">List Photos</a>
 </body>
 </html>
 

@@ -116,6 +116,18 @@ function MouseDown(e)
 			closestInd = i;
 			closestDist = distB;
 		}
+		distC = Math.sqrt(Math.pow(bboxes[i][0] - mouseX, 2) + Math.pow(bboxes[i][3] - mouseY, 2));
+		if(closestInd == -1 || distC < closestDist)
+		{
+			closestInd = i;
+			closestDist = distC;
+		}
+		distD = Math.sqrt(Math.pow(bboxes[i][2] - mouseX, 2) + Math.pow(bboxes[i][1] - mouseY, 2));
+		if(closestInd == -1 || distD < closestDist)
+		{
+			closestInd = i;
+			closestDist = distD;
+		}
 	}
 
 	//Update bounding box location
@@ -197,7 +209,7 @@ if($fina!==0)
 {
 ?>
 
-<h1>Edit ROI</h1>
+<h1>Edit ROIs</h1>
 
 <canvas id="canv" style="position: relative;" width="<?php echo $photoData['width'];?>" height="<?php echo $photoData['height'];?>">Canvas not supported</canvas><br/>
 
@@ -212,7 +224,7 @@ if($fina!==0)
 }
 ?>
 
-<a href="list.php">List</a>
+<a href="list.php">List Photos</a>
 </body>
 </html>
 
