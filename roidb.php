@@ -7,6 +7,13 @@ function CreateRoiTable(&$dbh)
 	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
 }
 
+function CheckRoiSchema(&$dbh)
+{
+	$exists = SqliteCheckTableExists($dbh,"rois");
+	if(!$exists)
+		CreateRoiTable($dbh);
+}
+
 function UpdateRois($dbh, $id, $bboxes)
 {
 	for($i=0;$i<count($bboxes);$i++)

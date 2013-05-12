@@ -70,6 +70,13 @@ function CreatePhotoTable(&$dbh)
 	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
 }
 
+function CheckPhotoSchema(&$dbh)
+{
+	$exists = SqliteCheckTableExists($dbh,"photos");
+	if(!$exists)
+		CreatePhotoTable($photoDb);
+}
+
 function GetPhotoData(&$dbh,$id)
 {
 	$sql = "SELECT * FROM photos WHERE id=?;";

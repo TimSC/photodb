@@ -7,9 +7,8 @@ require_once('roidb.php');
 chdir(dirname(realpath (__FILE__)));
 $photoDb = new PDO('sqlite:photodb.db');
 
-$exists = SqliteCheckTableExists($photoDb,"rois");
-if(!$exists)
-	CreateRoiTable($photoDb);
+CheckPhotoSchema($photoDb);
+CheckRoiSchema($photoDb);
 
 if(isset($_GET['id']))
 	$viewPhotoId = $_GET['id'];

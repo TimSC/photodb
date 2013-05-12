@@ -12,9 +12,7 @@ else
 	$viewPhotoId = NULL;
 if(isset($_POST['form-action']) and $_POST['form-action']=="Upload" and strlen($_POST['url'])>0)
 {
-	$exists = SqliteCheckTableExists($photoDb,"photos");
-	if(!$exists)
-		CreatePhotoTable($photoDb);
+	CheckPhotoSchema($photoDb);
 
 	$sql = "INSERT INTO photos (url, license, comment) VALUES (?,?,?);";
 	$sth = $photoDb->prepare($sql);
