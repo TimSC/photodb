@@ -47,6 +47,17 @@ if(isset($_POST['form-action']) && $_POST['form-action'] == "Add")
 	}
 }
 
+if(isset($_POST['form-action']) && $_POST['form-action'] == "Delete Selected Models")
+{
+	foreach($_POST as $k => $v)
+	{
+		if(substr($k, 0, 6)!= "model-") continue;
+		$modelId = (int)substr($k, 6);
+		RemoveModel($photoDb, $modelId);
+	}
+
+}
+
 ?>
 
 <html>
@@ -77,8 +88,8 @@ foreach($models as $model)
 }
 ?>
 </table>
-Add Model <input type="text" name="modelName" value="<?php echo $photoData['comment']; ?>"> <input type="submit" name="form-action" value="Add">
-
+Add Model to ROI <input type="text" name="modelName" value="<?php echo $photoData['comment']; ?>"> <input type="submit" name="form-action" value="Add"><br/>
+<input type="submit" name="form-action" value="Delete Selected Models">
 </form>
 
 <a href="photo.php?id=<?php echo $viewPhotoId;?>">Photo Details</a>
