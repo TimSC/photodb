@@ -232,6 +232,8 @@ if($fina!==0)
 }
 ?>
 
+<a href="photo.php?id=<?php echo $viewPhotoId;?>">Photo Details</a>
+<a href="managerois.php?id=<?php echo $viewPhotoId;?>">Manage ROIs</a>
 <a href="list.php">List Photos</a>
 </body>
 </html>
