@@ -48,6 +48,20 @@ function GetModelForRoi(&$dbh, $roiId)
 	return $sth->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function GetModelForStore(&$dbh, $modelId)
+{
+	$sql = "SELECT * FROM models WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($modelId));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
+
+	$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+	if(!isset($result[0]))
+		return NULL;
+	return $result[0];
+}
+
 function RemoveModel($dbh, $modelId)
 {
 	$sql = "DELETE FROM models WHERE id=?;";
