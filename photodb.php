@@ -124,7 +124,7 @@ function RemoveCachedPhoto(&$dbh, $id)
 	$fina = PhotoInStore($dbh, $id);
 
 	//Update database with filename
-	$sql = "UPDATE photos SET fina=NULL WHERE id=?;";
+	$sql = "UPDATE photos SET fina=NULL, width=NULL, height=NULL WHERE id=?;";
 	$sth = $dbh->prepare($sql);
 	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
 	$ret = $sth->execute(array($id));
