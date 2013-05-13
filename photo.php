@@ -61,6 +61,23 @@ Comment <input type="text" name="comment"><br>
 <?php
 }
 
+if($viewPhotoId!==NULL && isset($_POST['form-action']) && $_POST['form-action'] == "Edit")
+{
+	//print_r($_POST);
+	
+	if($_POST['url'] != $photoData['url'])
+		RemoveCachedPhoto($photoDb, $viewPhotoId);
+
+	$data = array();
+	$data["url"] = $_POST['url'];
+	$data["license"] = $_POST['license'];
+	$data["comment"] = $_POST['comment'];
+	UpdatePhotoData($photoDb, $viewPhotoId, $data);
+
+	$photoData = GetPhotoData($photoDb, $viewPhotoId);
+}
+
+
 if($viewPhotoId!=NULL && !isset($_GET['delete']))
 {
 
@@ -97,7 +114,7 @@ if($maxDim > 640)
 echo 'Size: '.$photoData['width']." by ".$photoData['height']."<br/>";
 ?>
 
-<form name="upload" method="post" action="photo.php">
+<form name="upload" method="post" action="photo.php?id=<?php echo $viewPhotoId;?>">
 URL <input type="text" name="url" value="<?php echo $photoData['url']; ?>"/><br/>
 License <input type="text" name="license" value="<?php echo $photoData['license']; ?>"/><br/>
 Comment <input type="text" name="comment" value="<?php echo $photoData['comment']; ?>"/><br/>

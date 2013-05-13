@@ -108,7 +108,35 @@ function SetPhotoDimensions($id, $dbh)
 	return array($si[0], $si[1]);
 }
 
-function DeletePhoto($dbh, $id)
+function UpdatePhotoData($dbh, $id, $data)
+{
+	//print_r($data);
+	//Update database with data
+	$sql = "UPDATE photos SET url=?, license=?, comment=? WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($data['url'], $data['license'], $data['comment'], $id));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+}
+
+function RemoveCachedPhoto(&$dbh, $id)
+{
+	$fina = PhotoInStore($dbh, $id);
+
+	//Update database with filename
+	$sql = "UPDATE photos SET fina=NULL WHERE id=?;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute(array($id));
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+
+	if($fina!==0 && file_exists($fina))
+	{
+		unlink($fina);
+	}
+}
+
+function DeletePhoto(&$dbh, $id)
 {
 	$fina = PhotoInStore($dbh, $id);
 	if($fina!==0 && file_exists($fina))
