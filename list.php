@@ -4,9 +4,7 @@ require_once('photodb.php');
 //Prepare database connection
 chdir(dirname(realpath (__FILE__)));
 $photoDb = new PDO('sqlite:photodb.db');
-$exists = SqliteCheckTableExists($photoDb,"photos");
-if(!$exists)
-	CreatePhotoTable($photoDb);
+CheckPhotoSchema($photoDb);
 
 $sql = "SELECT * FROM photos;";
 $sth = $photoDb->prepare($sql);
