@@ -1,12 +1,14 @@
 <?php
 require_once('photodb.php');
 require_once('roidb.php');
+require_once('attribsdb.php');
 
 //Prepare database connection
 chdir(dirname(realpath (__FILE__)));
 $photoDb = new PDO('sqlite:photodb.db');
 CheckPhotoSchema($photoDb);
 CheckRoiSchema($photoDb);
+CheckAttribsSchema($photoDb);
 
 $sql = "SELECT models.id as modelId, * FROM models INNER JOIN rois ON models.roiId = rois.id INNER JOIN photos ON rois.photoId = photos.id;";
 $sth = $photoDb->prepare($sql);
@@ -37,6 +39,11 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
 	$row['model'] = json_decode($row['model']);
 	$row['roiWidth'] = $roiWidth;
 	$row['roiHeight'] = $roiHeight;
+
+	$attribs = GetAttribsForRoi($photoDb, (int)$row['roiNum']);
+	$row['attribs'] = array();
+	foreach($attribs as $k => $v)
+		array_push($row['attribs'], $v);
 
 	array_push($out, $row);
 }
