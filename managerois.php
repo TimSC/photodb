@@ -83,6 +83,7 @@ foreach($models as $model)
 	echo "<input type=\"checkbox\" name=\"model-".$model['id']."\" value=\"c\"><a href=\"model.php?modelId=".$model['id']."\">".$model['modelName']."</a><br/>\n";
 }
 ?>
+<a href="attribs.php?roiId=<?php echo $box['id'];?>">Attribs</a>
 </td>
 </tr>
 <?php
