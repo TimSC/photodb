@@ -85,6 +85,16 @@ function GetRois($dbh, $id)
 	return $bboxes;
 }
 
+function GetAllRois($dbh)
+{
+	$sql = "SELECT * FROM rois ORDER BY id ASC;";
+	$sth = $dbh->prepare($sql);
+	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	$ret = $sth->execute();
+	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
+	return $sth->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function GetRoisForPhoto($dbh, $id)
 {
 	$sql = "SELECT * FROM rois WHERE photoId=? ORDER BY roiNum ASC;";

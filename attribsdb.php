@@ -58,11 +58,7 @@ function RemoveAttrib(&$dbh, $attribId)
 
 function UpdateAttribInStore(&$dbh, $modelId, $model)
 {
-	$sql = "UPDATE attribs SET model=? WHERE id=?;";
-	$sth = $dbh->prepare($sql);
-	if($sth===false) {$err= $dbh->errorInfo();throw new Exception($sql.",".$err[2]);}
-	$ret = $sth->execute(array($model, $modelId));
-	if($ret===false) {$err= $dbh->errorInfo();throw new Exception($query.",".$err[2]);}
+
 }
 
 ?>
