@@ -90,7 +90,7 @@ foreach($models as $model)
 }
 ?>
 </table>
-Add Model to ROI <input type="text" name="modelName" value="<?php echo $photoData['comment']; ?>"> <input type="submit" name="form-action" value="Add"><br/>
+Add Model to ROI <input type="text" name="modelName" value=""> <input type="submit" name="form-action" value="Add"><br/>
 <input type="submit" name="form-action" value="Delete Selected Models">
 </form>
 
