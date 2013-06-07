@@ -15,7 +15,10 @@ if($ret===false) {$err= $photoDb->errorInfo();throw new Exception($sql.",".$err[
 <html>
 <body>
 
-<a href="photo.php">Upload Photo</a>
+<p>
+<a href="photo.php">Upload Photo</a><br/>
+<a href="attribsBatch.php">Batch Attribute Rating</a>
+</p>
 
 <table border="2">
 <?php

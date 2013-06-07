@@ -46,6 +46,8 @@ $rois = GetAllRois($photoDb);
 <body>
 <h1>Attibutes: <?php echo $attrib; ?></h1>
 
+<p>Annotator ID: <?php echo $annot; ?></p>
+
 <form name="upload" method="post" action="attribsBatch.php?roiId=<?php echo (int)$_GET['roiId'];?>">
 <table border="2">
 <?php
