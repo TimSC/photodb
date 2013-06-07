@@ -40,7 +40,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
 	$row['roiWidth'] = $roiWidth;
 	$row['roiHeight'] = $roiHeight;
 
-	$attribs = GetAttribsForRoi($photoDb, (int)$row['roiNum']);
+	$attribs = GetAttribsForRoi($photoDb, (int)$row['roiId']);
 	$row['attribs'] = array();
 	foreach($attribs as $k => $v)
 		array_push($row['attribs'], $v);
