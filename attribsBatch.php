@@ -15,6 +15,7 @@ CheckModelsSchema($photoDb);
 CheckAttribsSchema($photoDb);
 
 $attrib = "age";
+//$attrib = "gender";
 
 if(isset($_SESSION['annot']))
 	$annot = $_SESSION['annot'];
@@ -55,8 +56,12 @@ foreach($rois as $k => $roi)
 	//Check if attribute is already done
 	$done = 0;
 	foreach($roiAttribs as $attribk => $attribv)
-		if($attribk == $attrib and $annot == $attribv['annot'])
+	{
+		if($attribv['key'] == $attrib and $annot == $attribv['annot'])
+		{
 			$done = 1;
+		}
+	}
 	if ($done) continue;
 
 	?>
