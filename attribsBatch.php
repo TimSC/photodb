@@ -14,8 +14,10 @@ CheckRoiSchema($photoDb);
 CheckModelsSchema($photoDb);
 CheckAttribsSchema($photoDb);
 
-$attrib = "age";
-//$attrib = "gender";
+if(isset($_GET['attrib']))
+	$attrib = $_GET['attrib'];
+else
+	$attrib = "age";
 
 if(isset($_SESSION['annot']))
 	$annot = $_SESSION['annot'];
@@ -48,7 +50,7 @@ $rois = GetAllRois($photoDb);
 
 <p>Annotator ID: <?php echo $annot; ?></p>
 
-<form name="upload" method="post" action="attribsBatch.php?roiId=<?php echo (int)$_GET['roiId'];?>">
+<form name="upload" method="post" action="attribsBatch.php?attrib=<?php echo $attrib;?>">
 <table border="2">
 <?php
 foreach($rois as $k => $roi)
